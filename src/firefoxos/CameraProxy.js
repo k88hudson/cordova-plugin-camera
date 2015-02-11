@@ -32,11 +32,16 @@ function takePicture(success, error, opts) {
     pick.onsuccess = function() {
         // image is returned as Blob in this.result.blob
         // we need to call success with url or base64 encoded image
-        if (opts && opts.destinationType == 0) {
-            // TODO: base64
+        // note: opts[1] is destinationType
+        if (opts && opts[1] == 0) {
+             var reader = new FileReader();
+            reader.onload = function () {
+                success(reader.result);
+            };
+            reader.readAsDataURL(this.result.blob);
             return;
         }
-        if (!opts || !opts.destinationType || opts.destinationType > 0) {
+        if (!opts || !opts[1] || opts[1] > 0) {
             // url
             return success(window.URL.createObjectURL(this.result.blob));
         }
